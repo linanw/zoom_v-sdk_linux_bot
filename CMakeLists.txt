@@ -44,10 +44,10 @@ file(COPY ${CMAKE_SOURCE_DIR}/lib/zoom_video_sdk/ DESTINATION ${CMAKE_SOURCE_DIR
 
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/lib/ffmpeg.tar.gz")
-    execute_process(COMMAND mkdir -p lib/ffmpeg COMMAND tar -xf lib/ffmpeg.tar.gz -C lib/ffmpeg COMMAND rm lib/ffmpeg.tar.gz WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+    execute_process(COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/lib/ffmpeg COMMAND tar -xf ${CMAKE_SOURCE_DIR}/lib/ffmpeg.tar.gz -C lib/ffmpeg COMMAND rm lib/ffmpeg.tar.gz WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 endif()
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/lib/qt_libs.tar.gz")
-    execute_process(COMMAND tar -xf lib/qt_libs.tar.gz -C lib/ COMMAND rm lib/qt_libs.tar.gz WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+    execute_process(COMMAND tar -xf ${CMAKE_SOURCE_DIR}/lib/qt_libs.tar.gz -C lib/ COMMAND rm lib/qt_libs.tar.gz WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 endif()
 
