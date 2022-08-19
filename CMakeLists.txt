@@ -50,4 +50,3 @@ endif()
 if(EXISTS "${CMAKE_SOURCE_DIR}/lib/qt_libs.tar.gz")
     execute_process(COMMAND tar -xf ${CMAKE_SOURCE_DIR}/lib/qt_libs.tar.gz -C lib/ COMMAND rm lib/qt_libs.tar.gz WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 endif()
-

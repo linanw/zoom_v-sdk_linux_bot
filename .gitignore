@@ -3,3 +3,5 @@ build/
 .vscode/
 !.vscode/c_cpp_properties.json
 *.mkv
+lib/ffmpeg
+lib/qt_libs
