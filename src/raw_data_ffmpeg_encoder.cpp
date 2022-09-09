@@ -165,7 +165,7 @@ int RawDataFFMPEGEncoder::ffmpeg_start(const char *userName, const char *userID,
 
 	char outFileName[110];
 	sprintf(outFileName, "%s.mkv", fileName);
-	sprintf(fn_out, "../%s", outFileName);
+	sprintf(fn_out, "%s", outFileName);
 
 	// ffmpeg init
 	// init filters
@@ -193,8 +193,8 @@ int RawDataFFMPEGEncoder::ffmpeg_start(const char *userName, const char *userID,
 
 	// init streams & codec
 	video_st = avformat_new_stream(pFormatCtx, 0);
-	// video_st->time_base.num = 1;
-	// video_st->time_base.den = 25;
+	video_st->time_base.num = 1;
+	video_st->time_base.den = 25;
 	if (video_st == NULL)
 	{
 		return -1;
@@ -399,7 +399,7 @@ int RawDataFFMPEGEncoder::ffmpeg_encode()
 	}
 	if (got_picture == 1)
 	{
-		printf("Succeed to encode frame: %5d\tsize:%5d\n", framecnt, pkt.size);
+		//printf("Succeed to encode frame: %5d\tsize:%5d\n", framecnt, pkt.size);
 		framecnt++;
 		pkt.stream_index = video_st->index;
 		av_write_frame(pFormatCtx, &pkt);

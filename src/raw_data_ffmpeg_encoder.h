@@ -62,7 +62,7 @@ class RawDataFFMPEGEncoder :
 	int in_width = 0;
 	int in_height = 0;
 	int out_width = 640;
-	int out_height = 480;
+	int out_height = 360;
 
 	AVFilterContext* buffersink_ctx;
 	AVFilterContext* buffersrc_ctx;
