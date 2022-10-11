@@ -1,7 +1,3 @@
-// my nighmare 
-// 1. using namespace ZOOMVIDEOSDK;
-
-
 // ffmpeg
 #define __STDC_CONSTANT_MACROS
 extern "C"
@@ -16,24 +12,13 @@ extern "C"
 #include "libavformat/avio.h"
 #include "libavcodec/avcodec.h"
 }
-// timestamp
-// #define _CRT_SECURE_NO_WARNINGS 1
-// #include <time.h>
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <sys/types.h>
-// #include <sys/timeb.h>
-// #include <string.h>
+#include <vector>
 #include <chrono>
+using namespace std::chrono;
 
 // Zoom Video SDK
 #include "helpers/zoom_video_sdk_user_helper_interface.h"
-
-// Other
-#include <vector>
-
 using namespace ZOOMVIDEOSDK;
-using namespace std::chrono;
 
 class RawDataFFMPEGEncoder :
     private IZoomVideoSDKRawDataPipeDelegate

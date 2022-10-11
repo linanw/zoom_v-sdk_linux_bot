@@ -75,26 +75,6 @@ public:
                 IZoomVideoSDKUser *user = userList->GetItem(index);
                 if (user)
                 {
-                    // class ZoomVideoSDKRawDataPipeDelegate : public IZoomVideoSDKRawDataPipeDelegate
-                    // {
-                    // public:
-                    //     /// \brief Call when subscribed data received.
-                    //     /// \param data_, data object.
-                    //     virtual void onRawDataFrameReceived(YUVRawDataI420 *data_)
-                    //     {
-                    //         // printf("onRawDataFrameReceived %d*%d\n", data_->GetStreamWidth(), data_->GetStreamHeight());
-                    //         printf(".");
-                    //         std::cout.flush();
-                    //     }
-
-                    //     /// \brief Call when subscribed data status changed.
-                    //     /// \param status, current data status.
-                    //     virtual void onRawDataStatusChanged(RawDataStatus status)
-                    //     {
-                    //     }
-                    // };
-                    // static ZoomVideoSDKRawDataPipeDelegate s_video_data_cb_obj;
-                    // user->GetVideoPipe()->subscribe(ZoomVideoSDKResolution_720P, &s_video_data_cb_obj);
                     RawDataFFMPEGEncoder *encoder = new RawDataFFMPEGEncoder(user);
                 }
             }
