@@ -29,5 +29,5 @@ g++ curl_example.cpp -o curl_example -lcurl
 The only caveat is that when dealing with SSL connections, they need to use the OpenSSL libraries.
 
 //todo
-make a branch to commit to
-make it dynamic and read from config.json
+stream to rtmp (currently not working, handled in onchatmessagereceived)
+call localhost:8888

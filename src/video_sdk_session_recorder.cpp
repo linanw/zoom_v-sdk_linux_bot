@@ -24,6 +24,7 @@ using Json = nlohmann::json;
 USING_ZOOM_VIDEO_SDK_NAMESPACE
 IZoomVideoSDK *video_sdk_obj;
 GMainLoop *loop;
+std::string FINALJWTToken;
 
 std::string getSelfDirPath()
 {
@@ -147,14 +148,17 @@ public:
     /// \param pLiveStreamHelper is the pointer to live stream helper object, see \link IZoomVideoSDKLiveStreamHelper
     /// \endlink. \param status is the current status of live stream.
     virtual void onLiveStreamStatusChanged(IZoomVideoSDKLiveStreamHelper *pLiveStreamHelper,
-                                           ZoomVideoSDKLiveStreamStatus status){};
+                                           ZoomVideoSDKLiveStreamStatus status){
+
+
+                                           };
 
     /// \brief Triggered when chat message received.
     /// \param pChatHelper is the pointer to chat helper object, see \link IZoomVideoSDKChatHelper \endlink.
     /// \param messageItem is the pointer to message object
     virtual void onChatNewMessageNotify(IZoomVideoSDKChatHelper *pChatHelper, IZoomVideoSDKChatMessage *messageItem){
     //printf("chat message received\n");
- if (!messageItem)
+    if (!messageItem)
         return;
 
     //get raw zchar_t* 
@@ -199,7 +203,46 @@ public:
 
     printf("chat message received : catch\n");
 
+
+
+
     }
+
+       else  if (s.compare("stream")==0){
+
+    printf("chat message received : stream\n");
+
+                                               // Get the IZoomVideoSDKLiveStreamHelper to perform livestream actions.
+    IZoomVideoSDKLiveStreamHelper* pLiveStreamHelper = video_sdk_obj->getLiveStreamHelper();
+
+       // Check if live stream can start.
+   // if (pLiveStreamHelper->canStartLiveStream() == ZoomVideoSDKErrors_Success) {
+
+    const zchar_t* strStreamUrl ="rtmp://a.rtmp.youtube.com/live2";
+    const zchar_t* strKey ="6kft-yswg-uf68-0sj1-49gm";
+    const zchar_t* strBroadcastUrl ="https://www.youtube.com/watch?v=oCJdsKSrTHo";
+    // Call startLiveStream to begin live stream.
+    int err = pLiveStreamHelper->startLiveStream(strStreamUrl, strKey, strBroadcastUrl);
+
+        if (err == ZoomVideoSDKErrors_Success)
+        {
+            // Live stream successfully began.
+              printf(" Live stream successfully began.\n");
+
+        }
+        else
+        {
+            // Live stream could not start.
+
+              printf(" Live stream could not start.\n");
+
+        }
+//}
+
+
+    }
+
+ 
     };
 
     /// \brief Triggered when host changed.
@@ -354,11 +397,11 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
     std::string response=(char*)contents;
 
     std::string response2= response.substr(14,response.length());
-    std::string FINALJWTTOKEN= response2.substr(0,response2.length()-2);
+    FINALJWTToken =response2.substr(0,response2.length()-2);
     return size * nmemb;
 }
 
-int getJWTToken(){
+int getJWTToken(std::string remote_url, std::string session_name){
   CURL *curl;
   CURLcode res;
   std::string readBuffer;
@@ -368,9 +411,10 @@ int getJWTToken(){
 
   curl = curl_easy_init();
   if(curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, "https://asdc.cc/video/");
+    //curl_easy_setopt(curl, CURLOPT_URL, "https://asdc.cc/video/");
+    curl_easy_setopt(curl, CURLOPT_URL, remote_url.c_str());
 
-//buffer size
+    //buffer size
       curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, 120000L);
     //region for callback
     // curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -380,20 +424,20 @@ int getJWTToken(){
     //std::cout << readBuffer << std::endl;
     //region for call back
 
-//headers
-  headers = curl_slist_append(headers, "Expect:");
-  headers = curl_slist_append(headers, "Content-Type: application/json");
-  curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-//std::string json = "{\"sessionName\":\"herochun6871\",\"role\":1,\"user_identity\":\"user_identity6871\",\"session_key\":\"session_key6871\"}";
-std::string json = "{\"sessionName\":\"herochun6871\",\"role\":1,\"user_identity\":\"user_identity6871\",\"session_key\":\"session_key6871\"}";
+   //headers
+   headers = curl_slist_append(headers, "Expect:");
+   headers = curl_slist_append(headers, "Content-Type: application/json");
+   curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+  
+   //std::string json = "{\"sessionName\":\"herochun6871\",\"role\":1,\"user_identity\":\"user_identity6871\",\"session_key\":\"session_key6871\"}";
+   std::string json = "{\"sessionName\":\""+session_name+"\",\"role\":1,\"user_identity\":\"user_identity6871\",\"session_key\":\"session_key6871\"}";
    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json.c_str());
    //callback
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
     //perform
-   res = curl_easy_perform(curl);
-   std::cout << readBuffer << std::endl;
+    res = curl_easy_perform(curl);
+    std::cout << readBuffer << std::endl;
     /* Check for errors */
     if(res != CURLE_OK)
       fprintf(stderr, "curl_easy_perform() failed: %s\n",
@@ -433,7 +477,7 @@ int main(int argc, char *argv[])
     t.seekg(0);
     t.read(&buffer[0], size);
 
-    std::string session_name, session_psw, session_token;
+    std::string session_name, session_psw, session_token, local_url, remote_url;
     do
     {
         Json config_json;
@@ -452,9 +496,12 @@ int main(int argc, char *argv[])
             break;
         }
 
+
         Json json_name = config_json["session_name"];
         Json json_psw = config_json["session_psw"];
         Json json_token = config_json["token"];
+        Json json_local_url = config_json["local_url_for_serial_control"];
+        Json json_remote_url = config_json["remote_url_for_jwt_token"];
         if (!json_name.is_null())
         {
             session_name = json_name.get<std::string>();
@@ -470,15 +517,29 @@ int main(int argc, char *argv[])
             session_token = json_token.get<std::string>();
             printf("config session_token: %s\n", session_token.c_str());
         }
+
+         if (!json_local_url.is_null())
+        {
+            local_url = json_local_url.get<std::string>();
+            printf("config local_url: %s\n", local_url.c_str());
+        }
+
+         if (!json_remote_url.is_null())
+        {
+            remote_url = json_remote_url.get<std::string>();
+            printf("config remote_url: %s\n", remote_url.c_str());
+        }
     } while (false);
 
     if (session_name.size() == 0 || session_token.size() == 0)
     {
         return 0;
     }
-    getJWTToken();
+    getJWTToken(remote_url,session_name);
     printf("begin to join: %s\n", self_dir.c_str());
-    joinVideoSDKSession(session_name, session_psw, session_token);
+    //joinVideoSDKSession(session_name, session_psw, session_token);
+    
+    joinVideoSDKSession(session_name, session_psw, FINALJWTToken);
 
     struct sigaction sigIntHandler;
 
