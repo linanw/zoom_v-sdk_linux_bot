@@ -7,6 +7,8 @@
 #include <iostream>
 #include <signal.h>
 #include <stdlib.h>
+#include <curl/curl.h>
+
 
 #include "glib.h"
 #include "json.hpp"
@@ -16,6 +18,7 @@
 #include "zoom_video_sdk_delegate_interface.h"
 #include "zoom_video_sdk_interface.h"
 #include "raw_data_ffmpeg_encoder.h"
+#include "zoom_video_sdk_chat_message_interface.h"
 
 using Json = nlohmann::json;
 USING_ZOOM_VIDEO_SDK_NAMESPACE
@@ -149,7 +152,55 @@ public:
     /// \brief Triggered when chat message received.
     /// \param pChatHelper is the pointer to chat helper object, see \link IZoomVideoSDKChatHelper \endlink.
     /// \param messageItem is the pointer to message object
-    virtual void onChatNewMessageNotify(IZoomVideoSDKChatHelper *pChatHelper, IZoomVideoSDKChatMessage *messageItem){};
+    virtual void onChatNewMessageNotify(IZoomVideoSDKChatHelper *pChatHelper, IZoomVideoSDKChatMessage *messageItem){
+    //printf("chat message received\n");
+ if (!messageItem)
+        return;
+
+    //get raw zchar_t* 
+    //for non win32, this is mapped to a char datatype
+    const zchar_t* szMessageContent = messageItem->getContent();
+
+  
+    //IZoomVideoSDKUser* pRecievingUser = messageItem->getReceiveUser();
+    //IZoomVideoSDKUser* pSendingUser = messageItem->getSendUser();
+
+
+    //convert to string
+    std::string s = szMessageContent;
+
+
+    if (s.compare("u")==0){
+
+    printf("chat message received : up\n");
+
+    }
+    else  if (s.compare("d")==0){
+
+    printf("chat message received : down\n");
+
+    }
+       else  if (s.compare("l")==0){
+
+    printf("chat message received : left\n");
+
+    }
+       else  if (s.compare("r")==0){
+
+    printf("chat message received : right\n");
+
+    }
+       else  if (s.compare("s")==0){
+
+    printf("chat message received : start\n");
+
+    }
+       else  if (s.compare("c")==0){
+
+    printf("chat message received : catch\n");
+
+    }
+    };
 
     /// \brief Triggered when host changed.
     /// \param pUserHelper is the pointer to user helper object, see \link IZoomVideoSDKUserHelper \endlink.
@@ -212,14 +263,22 @@ public:
     ///        Once the command channel is active, this callback is triggered each time a message has been received.
     /// \param pSender The user who sent the command, see \link IZoomVideoSDKUser \endlink.
     /// \param strCmd Received command.
-    virtual void onCommandReceived(IZoomVideoSDKUser *sender, const zchar_t *strCmd){};
+    virtual void onCommandReceived(IZoomVideoSDKUser *sender, const zchar_t *strCmd){
+        //strCmd;
+    printf("command message received\n");
+
+    };
 
     /// \brief Callback for when the command channel is ready to be used.
     ///        After the SDK attempts to establish a connection for the command channel upon joining a session,
     ///        this callback will be triggered once the connection attempt has completed.
     /// \param isSuccess true: success, command channel is ready to be used.
     ///        false: Failure, command channel was unable to connect.
-    virtual void onCommandChannelConnectResult(bool isSuccess){};
+    virtual void onCommandChannelConnectResult(bool isSuccess){
+            if (isSuccess){
+            printf("command channel connected : success\n");
+            }
+    };
 
     /// \brief Triggered when call Out status changed.
     virtual void onInviteByPhoneStatus(PhoneStatus status, PhoneFailedReason reason){};
@@ -287,6 +346,66 @@ void joinVideoSDKSession(std::string &session_name, std::string &session_psw, st
     IZoomVideoSDKSession *session = NULL;
     if (video_sdk_obj)
         session = video_sdk_obj->joinSession(session_context);
+}
+
+static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+    ((std::string*)userp)->append((char*)contents, size * nmemb);
+    std::string response=(char*)contents;
+
+    std::string response2= response.substr(14,response.length());
+    std::string FINALJWTTOKEN= response2.substr(0,response2.length()-2);
+    return size * nmemb;
+}
+
+int getJWTToken(){
+  CURL *curl;
+  CURLcode res;
+  std::string readBuffer;
+  
+  char *json = NULL;
+  struct curl_slist *headers = NULL;
+
+  curl = curl_easy_init();
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "https://asdc.cc/video/");
+
+//buffer size
+      curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, 120000L);
+    //region for callback
+    // curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    // curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+    // res = curl_easy_perform(curl);
+    // curl_easy_cleanup(curl);
+    //std::cout << readBuffer << std::endl;
+    //region for call back
+
+//headers
+  headers = curl_slist_append(headers, "Expect:");
+  headers = curl_slist_append(headers, "Content-Type: application/json");
+  curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+//std::string json = "{\"sessionName\":\"herochun6871\",\"role\":1,\"user_identity\":\"user_identity6871\",\"session_key\":\"session_key6871\"}";
+std::string json = "{\"sessionName\":\"herochun6871\",\"role\":1,\"user_identity\":\"user_identity6871\",\"session_key\":\"session_key6871\"}";
+   curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json.c_str());
+   //callback
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+    //perform
+   res = curl_easy_perform(curl);
+   std::cout << readBuffer << std::endl;
+    /* Check for errors */
+    if(res != CURLE_OK)
+      fprintf(stderr, "curl_easy_perform() failed: %s\n",
+              curl_easy_strerror(res));
+ 
+    /* always cleanup */
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(curl);
+    
+  }
+  return 0;
+
 }
 
 gboolean timeout_callback(gpointer data)
@@ -357,7 +476,7 @@ int main(int argc, char *argv[])
     {
         return 0;
     }
-
+    getJWTToken();
     printf("begin to join: %s\n", self_dir.c_str());
     joinVideoSDKSession(session_name, session_psw, session_token);
 

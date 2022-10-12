@@ -1,5 +1,7 @@
 {
-    "session_name": "test",
-    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBfa2V5IjoiQ3MyNDJwMWFDV1lxdTlCYkVlRTRwUWZESmhCZGwyM2UzaFhzIiwidmVyc2lvbiI6MSwiaWF0IjoxNjYwODAxMDI1LCJ1c2VyX2lkZW50aXR5IjoiMTIzIiwiZXhwIjoxNjYwOTczODI1LCJ0cGMiOiJUZXN0Iiwic2Vzc2lvbl9rZXkiOiIiLCJyb2xlX3R5cGUiOjF9.56ddy-5x0jIRDfVCwIEpD9gyIRFFksRjIAiBt6HSJHU",
-    "session_psw": "123"
+    "session_name": "cstansession2",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBfa2V5IjoiY0FzWUFCcThST1p0cWtnS1lLVUxSRjVTa2o5aWpVdzBXMGlZIiwidmVyc2lvbiI6MSwicm9sZV90eXBlIjoxLCJ1c2VyX2lkZW50aXR5IjoiVXNlciBJRCIsInNlc3Npb25fa2V5IjoiU2Vzc2lvbiBrZXkiLCJpYXQiOjE2NjU1NTM2MTksImV4cCI6MTY2NTcyNjQxOSwidHBjIjoiY3N0YW5zZXNzaW9uMiJ9.930r2_lqMDt1EHlkd7DK1L5cQRdtju8pJrNiCdzd9t8",
+    "session_psw": "12345678",
+    "local_url_for_serial_control": "http://localhost:8888/",
+    "remote_url_for_jwt_token": "https://asdc.cc/video/"
 }
