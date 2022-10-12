@@ -129,7 +129,10 @@ public:
     /// \brief Triggered when chat message received.
     /// \param pChatHelper is the pointer to chat helper object, see \link IZoomVideoSDKChatHelper \endlink.
     /// \param messageItem is the pointer to message object
-    virtual void onChatNewMessageNotify(IZoomVideoSDKChatHelper *pChatHelper, IZoomVideoSDKChatMessage *messageItem){};
+    virtual void onChatNewMessageNotify(IZoomVideoSDKChatHelper *pChatHelper, IZoomVideoSDKChatMessage *messageItem)
+    {
+        printf("message\n");
+    };
 
     /// \brief Triggered when host changed.
     /// \param pUserHelper is the pointer to user helper object, see \link IZoomVideoSDKUserHelper \endlink.
@@ -192,14 +195,20 @@ public:
     ///        Once the command channel is active, this callback is triggered each time a message has been received.
     /// \param pSender The user who sent the command, see \link IZoomVideoSDKUser \endlink.
     /// \param strCmd Received command.
-    virtual void onCommandReceived(IZoomVideoSDKUser *sender, const zchar_t *strCmd){};
+    virtual void onCommandReceived(IZoomVideoSDKUser *sender, const zchar_t *strCmd)
+    {
+        printf("command received: %s\n", sender->getUserName());
+    };
 
     /// \brief Callback for when the command channel is ready to be used.
     ///        After the SDK attempts to establish a connection for the command channel upon joining a session,
     ///        this callback will be triggered once the connection attempt has completed.
     /// \param isSuccess true: success, command channel is ready to be used.
     ///        false: Failure, command channel was unable to connect.
-    virtual void onCommandChannelConnectResult(bool isSuccess){};
+    virtual void onCommandChannelConnectResult(bool isSuccess)
+    {
+        printf("command channel connect: %d\n", isSuccess);
+    };
 
     /// \brief Triggered when call Out status changed.
     virtual void onInviteByPhoneStatus(PhoneStatus status, PhoneFailedReason reason){};
