@@ -178,33 +178,33 @@ public:
     if (s.compare("u")==0){
 
     printf("chat message received : up\n");
-    
-    //callNodeJSToSerialHelper(FINALLocalURL+"up");
+    std::string url_to_call = FINALLocalURL+"up";
+    //callNodeJSToSerialHelper(url_to_call);
     }
     else  if (s.compare("d")==0){
 
     printf("chat message received : down\n");
-    //callNodeJSToSerialHelper(FINALLocalURL+"down");
+     //callNodeJSToSerialHelper(FINALLocalURL+"down");
     }
        else  if (s.compare("l")==0){
 
     printf("chat message received : left\n");
-  //callNodeJSToSerialHelper(FINALLocalURL+"left");
+    //callNodeJSToSerialHelper(FINALLocalURL+"left");
     }
        else  if (s.compare("r")==0){
 
     printf("chat message received : right\n");
- //callNodeJSToSerialHelper(FINALLocalURL+"right");
+    //callNodeJSToSerialHelper(FINALLocalURL+"right");
     }
        else  if (s.compare("s")==0){
 
     printf("chat message received : start\n");
- //callNodeJSToSerialHelper(FINALLocalURL+"start");
+   //callNodeJSToSerialHelper(FINALLocalURL+"start");
     }
        else  if (s.compare("c")==0){
 
     printf("chat message received : catch\n");
- //callNodeJSToSerialHelper(FINALLocalURL+"catch");
+    //callNodeJSToSerialHelper(FINALLocalURL+"catch");
 
 
 
@@ -214,7 +214,7 @@ public:
 
     printf("chat message received : stream\n");
 
-                                               // Get the IZoomVideoSDKLiveStreamHelper to perform livestream actions.
+    // Get the IZoomVideoSDKLiveStreamHelper to perform livestream actions.
     IZoomVideoSDKLiveStreamHelper* pLiveStreamHelper = video_sdk_obj->getLiveStreamHelper();
 
        // Check if live stream can start.
@@ -395,16 +395,17 @@ void joinVideoSDKSession(std::string &session_name, std::string &session_psw, st
 
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
+
+    //TODO dreamtcs improve if we have time
     ((std::string*)userp)->append((char*)contents, size * nmemb);
     std::string response=(char*)contents;
-
     std::string response2= response.substr(14,response.length());
     FINALJWTToken =response2.substr(0,response2.length()-2);
     return size * nmemb;
 }
 
 
-int callNodeJSToSerialHelper(std::string local_url)
+static int callNodeJSToSerialHelper(std::string local_url)
 {
   CURL *curl;
   CURLcode res;
