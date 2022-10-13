@@ -421,8 +421,44 @@ void joinVideoSDKSession(std::string &session_name, std::string &session_psw, st
     IZoomVideoSDKSession *session = NULL;
     if (video_sdk_obj)
         session = video_sdk_obj->joinSession(session_context);
+
+       
 }
 
+void startLiveStreaming(){
+    // Get the IZoomVideoSDKLiveStreamHelper to perform livestream actions.
+    IZoomVideoSDKLiveStreamHelper* pLiveStreamHelper = video_sdk_obj->getLiveStreamHelper();
+
+       // Check if live stream can start.
+ if (pLiveStreamHelper->canStartLiveStream() == ZoomVideoSDKErrors_Success) {
+
+    const zchar_t* strStreamUrl ="rtmp://a.rtmp.youtube.com/live2";
+    const zchar_t* strKey ="6kft-yswg-uf68-0sj1-49gm";
+    const zchar_t* strBroadcastUrl ="https://www.youtube.com/watch?v=oCJdsKSrTHo";
+    // Call startLiveStream to begin live stream.
+    int err = pLiveStreamHelper->startLiveStream(strStreamUrl, strKey, strBroadcastUrl);
+
+        if (err == ZoomVideoSDKErrors_Success)
+        {
+            // Live stream successfully began.
+              printf(" Live stream successfully began.\n");
+
+        }
+        else
+        {
+            // Live stream could not start.
+
+              printf(" Live stream could not start.\n");
+
+        }
+}
+}
+void startCommandChannel(){
+
+    IZoomVideoSDKCmdChannel* commandChannel = video_sdk_obj->getCmdChannel();
+  commandChannel->sendCommand(NULL,"init");
+
+}
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
 
@@ -576,7 +612,9 @@ int main(int argc, char *argv[])
     //joinVideoSDKSession(session_name, session_psw, session_token);
     
     joinVideoSDKSession(session_name, session_psw, FINALJWTToken);
-
+       startCommandChannel();
+       
+     startLiveStreaming();
     struct sigaction sigIntHandler;
 
     sigIntHandler.sa_handler = my_handler;
