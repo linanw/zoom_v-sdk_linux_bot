@@ -179,32 +179,37 @@ public:
 
     printf("chat message received : up\n");
     std::string url_to_call = FINALLocalURL+"up";
-    //callNodeJSToSerialHelper(url_to_call);
+    callNodeJSToSerialHelper(url_to_call);
     }
     else  if (s.compare("d")==0){
 
     printf("chat message received : down\n");
-     //callNodeJSToSerialHelper(FINALLocalURL+"down");
+  std::string url_to_call = FINALLocalURL+"down";
+    callNodeJSToSerialHelper(url_to_call);
     }
        else  if (s.compare("l")==0){
 
     printf("chat message received : left\n");
-    //callNodeJSToSerialHelper(FINALLocalURL+"left");
+    std::string url_to_call = FINALLocalURL+"left";
+    callNodeJSToSerialHelper(url_to_call);
     }
        else  if (s.compare("r")==0){
 
     printf("chat message received : right\n");
-    //callNodeJSToSerialHelper(FINALLocalURL+"right");
+   std::string url_to_call = FINALLocalURL+"right";
+    callNodeJSToSerialHelper(url_to_call);
     }
        else  if (s.compare("s")==0){
 
     printf("chat message received : start\n");
-   //callNodeJSToSerialHelper(FINALLocalURL+"start");
+    std::string url_to_call = FINALLocalURL+"start";
+    callNodeJSToSerialHelper(url_to_call);
     }
        else  if (s.compare("c")==0){
 
     printf("chat message received : catch\n");
-    //callNodeJSToSerialHelper(FINALLocalURL+"catch");
+   std::string url_to_call = FINALLocalURL+"catch";
+    callNodeJSToSerialHelper(url_to_call);
 
 
 
@@ -359,6 +364,31 @@ public:
     /// \param speakingLanguage: an object of the spoken message language.
     /// \param transcriptLanguageId: an object of the message language you want to translate.
     virtual void onLiveTranscriptionMsgError(ILiveTranscriptionLanguage *spokenLanguage, ILiveTranscriptionLanguage *transcriptLanguage) {}
+
+
+
+
+    static int callNodeJSToSerialHelper(std::string local_url)
+{
+  CURL *curl;
+  CURLcode res;
+
+  curl = curl_easy_init();
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, local_url.c_str());
+
+    /* Perform the request, res will get the return code */
+    res = curl_easy_perform(curl);
+    /* Check for errors */
+    if(res != CURLE_OK)
+      fprintf(stderr, "curl_easy_perform() failed: %s\n",
+              curl_easy_strerror(res));
+
+    /* always cleanup */
+    curl_easy_cleanup(curl);
+  }
+  return 0;
+}
 };
 
 void joinVideoSDKSession(std::string &session_name, std::string &session_psw, std::string &session_token)
@@ -405,27 +435,6 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
 }
 
 
-static int callNodeJSToSerialHelper(std::string local_url)
-{
-  CURL *curl;
-  CURLcode res;
-
-  curl = curl_easy_init();
-  if(curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, local_url.c_str());
-
-    /* Perform the request, res will get the return code */
-    res = curl_easy_perform(curl);
-    /* Check for errors */
-    if(res != CURLE_OK)
-      fprintf(stderr, "curl_easy_perform() failed: %s\n",
-              curl_easy_strerror(res));
-
-    /* always cleanup */
-    curl_easy_cleanup(curl);
-  }
-  return 0;
-}
 
 int getJWTToken(std::string remote_url, std::string session_name){
   CURL *curl;
