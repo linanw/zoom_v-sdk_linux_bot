@@ -25,6 +25,7 @@ USING_ZOOM_VIDEO_SDK_NAMESPACE
 IZoomVideoSDK *video_sdk_obj;
 GMainLoop *loop;
 std::string FINALJWTToken;
+std::string FINALLocalURL;
 
 std::string getSelfDirPath()
 {
@@ -177,32 +178,33 @@ public:
     if (s.compare("u")==0){
 
     printf("chat message received : up\n");
-
+    
+    //callNodeJSToSerialHelper(FINALLocalURL+"up");
     }
     else  if (s.compare("d")==0){
 
     printf("chat message received : down\n");
-
+    //callNodeJSToSerialHelper(FINALLocalURL+"down");
     }
        else  if (s.compare("l")==0){
 
     printf("chat message received : left\n");
-
+  //callNodeJSToSerialHelper(FINALLocalURL+"left");
     }
        else  if (s.compare("r")==0){
 
     printf("chat message received : right\n");
-
+ //callNodeJSToSerialHelper(FINALLocalURL+"right");
     }
        else  if (s.compare("s")==0){
 
     printf("chat message received : start\n");
-
+ //callNodeJSToSerialHelper(FINALLocalURL+"start");
     }
        else  if (s.compare("c")==0){
 
     printf("chat message received : catch\n");
-
+ //callNodeJSToSerialHelper(FINALLocalURL+"catch");
 
 
 
@@ -401,6 +403,29 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
     return size * nmemb;
 }
 
+
+int callNodeJSToSerialHelper(std::string local_url)
+{
+  CURL *curl;
+  CURLcode res;
+
+  curl = curl_easy_init();
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, local_url.c_str());
+
+    /* Perform the request, res will get the return code */
+    res = curl_easy_perform(curl);
+    /* Check for errors */
+    if(res != CURLE_OK)
+      fprintf(stderr, "curl_easy_perform() failed: %s\n",
+              curl_easy_strerror(res));
+
+    /* always cleanup */
+    curl_easy_cleanup(curl);
+  }
+  return 0;
+}
+
 int getJWTToken(std::string remote_url, std::string session_name){
   CURL *curl;
   CURLcode res;
@@ -521,6 +546,7 @@ int main(int argc, char *argv[])
          if (!json_local_url.is_null())
         {
             local_url = json_local_url.get<std::string>();
+            FINALLocalURL=local_url;
             printf("config local_url: %s\n", local_url.c_str());
         }
 
