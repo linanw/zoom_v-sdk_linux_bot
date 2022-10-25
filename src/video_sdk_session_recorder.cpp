@@ -80,27 +80,7 @@ public:
                 IZoomVideoSDKUser *user = userList->GetItem(index);
                 if (user)
                 {
-                    // class ZoomVideoSDKRawDataPipeDelegate : public IZoomVideoSDKRawDataPipeDelegate
-                    // {
-                    // public:
-                    //     /// \brief Call when subscribed data received.
-                    //     /// \param data_, data object.
-                    //     virtual void onRawDataFrameReceived(YUVRawDataI420 *data_)
-                    //     {
-                    //         // printf("onRawDataFrameReceived %d*%d\n", data_->GetStreamWidth(), data_->GetStreamHeight());
-                    //         printf(".");
-                    //         std::cout.flush();
-                    //     }
-
-                    //     /// \brief Call when subscribed data status changed.
-                    //     /// \param status, current data status.
-                    //     virtual void onRawDataStatusChanged(RawDataStatus status)
-                    //     {
-                    //     }
-                    // };
-                    // static ZoomVideoSDKRawDataPipeDelegate s_video_data_cb_obj;
-                    // user->GetVideoPipe()->subscribe(ZoomVideoSDKResolution_720P, &s_video_data_cb_obj);
-                    RawDataFFMPEGEncoder *encoder = new RawDataFFMPEGEncoder(user);
+                    // RawDataFFMPEGEncoder *encoder = new RawDataFFMPEGEncoder(user);
                 }
             }
         }
@@ -209,7 +189,7 @@ public:
 
     printf("chat message received : catch\n");
    std::string url_to_call = FINALLocalURL+"catch";
-    callNodeJSToSerialHelper(url_to_call);
+    callNodeJSToSerialHelper(url_to_call); 
 
 
 
@@ -418,6 +398,7 @@ void joinVideoSDKSession(std::string &session_name, std::string &session_psw, st
     session_context.videoOption.localVideoOn = true;
     session_context.audioOption.connect = true;
     session_context.audioOption.mute = true;
+    session_context.sessionIdleTimeoutMins = 0;
     IZoomVideoSDKSession *session = NULL;
     if (video_sdk_obj)
         session = video_sdk_obj->joinSession(session_context);
@@ -455,8 +436,8 @@ void startLiveStreaming(){
 }
 void startCommandChannel(){
 
-    IZoomVideoSDKCmdChannel* commandChannel = video_sdk_obj->getCmdChannel();
-  commandChannel->sendCommand(NULL,"init");
+//     IZoomVideoSDKCmdChannel* commandChannel = video_sdk_obj->getCmdChannel();
+//   commandChannel->sendCommand(NULL,"init");
 
 }
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
@@ -612,9 +593,8 @@ int main(int argc, char *argv[])
     //joinVideoSDKSession(session_name, session_psw, session_token);
     
     joinVideoSDKSession(session_name, session_psw, FINALJWTToken);
-       startCommandChannel();
-       
-     startLiveStreaming();
+    // startCommandChannel();
+    // startLiveStreaming();
     struct sigaction sigIntHandler;
 
     sigIntHandler.sa_handler = my_handler;
