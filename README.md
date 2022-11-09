@@ -1,3 +1,5 @@
+# Download & Build
+
 ```
 sudo apt update
 sudo apt install -y build-essential gcc cmake
@@ -7,4 +9,19 @@ cd zoom_v-sdk_linux_bot/
 cmake -B build
 cd build/
 make
+```
+
+# Generate You JWT
+You much have an account [subscribed](https://marketplace.zoom.us/docs/sdk/video/developer-accounts/) Zoom Video SDK. 
+
+Find your Video SDK [key and secret](https://marketplace.zoom.us/docs/sdk/video/auth/#get-video-sdk-key-and-secret). 
+
+Generate your JWT with [this script](https://gist.github.com/linanw/9144d9bfc84da4076ab5beb04d4f9db1).
+
+# Run 
+Add your JWT to bin/config.json.
+
+Run the app from bin folder:
+```
+./zoom_v-sdk_linux_bot
 ```
