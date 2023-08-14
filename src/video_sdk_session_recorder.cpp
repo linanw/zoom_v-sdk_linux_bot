@@ -189,13 +189,8 @@ public:
        else  if (s.compare("c")==0){
 
     printf("chat message received : catch\n");
-<<<<<<< HEAD
     std::string url_to_call = FINALLocalURL+"catch";
     callNodeJSToSerialHelper(url_to_call);
-=======
-   std::string url_to_call = FINALLocalURL+"catch";
-    callNodeJSToSerialHelper(url_to_call); 
->>>>>>> 70e1335f2732f9302104d45de37546920eb03add
 
 
 
