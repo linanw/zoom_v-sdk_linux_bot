@@ -662,15 +662,12 @@ int main(int argc, char *argv[])
     //joinVideoSDKSession(session_name, session_psw, session_token);
       printf("Token is: %s\n", FINALJWTToken.c_str());
     joinVideoSDKSession(session_name, session_psw, FINALJWTToken);
-<<<<<<< HEAD
+
      //dreamtcs to fix this
     //startCommandChannel();
-       
      //startLiveStreaming();
-=======
-    // startCommandChannel();
-    // startLiveStreaming();
->>>>>>> 70e1335f2732f9302104d45de37546920eb03add
+
+
     struct sigaction sigIntHandler;
 
     sigIntHandler.sa_handler = my_handler;
