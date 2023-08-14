@@ -457,14 +457,9 @@ void startLiveStreaming(){
 }
 void startCommandChannel(){
 
-<<<<<<< HEAD
     IZoomVideoSDKCmdChannel* commandChannel = video_sdk_obj->getCmdChannel();
   //dreamtcs
   //commandChannel->sendCommand(NULL,"init");
-=======
-//     IZoomVideoSDKCmdChannel* commandChannel = video_sdk_obj->getCmdChannel();
-//   commandChannel->sendCommand(NULL,"init");
->>>>>>> 70e1335f2732f9302104d45de37546920eb03add
 
 }
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
