@@ -26,6 +26,43 @@ public:
 	virtual const zchar_t* getCountryCode() = 0;
 };
 
+/*! \enum ZoomVideoSDKDialInNumType
+	\brief Type of telephone call.
+	Here are more detailed structural descriptions.
+*/
+enum ZoomVideoSDKDialInNumType
+{
+	ZoomVideoSDKDialInNumType_None,    ///<For initialization.
+	ZoomVideoSDKDialInNumType_Toll,    ///<Paid.
+	ZoomVideoSDKDialInNumType_TollFree,///<Free.
+};
+
+/// \brief Dial-in meeting Interface.
+class IZoomVideoSDKSessionDialInNumberInfo
+{
+public:
+	virtual ~IZoomVideoSDKSessionDialInNumberInfo() {}
+	/// \brief Get the country ID of the current information.
+	/// \return The country ID.	
+	virtual const zchar_t* getCountryId() = 0;
+	/// \brief Get the country code of the current information.
+	/// \return The country code.	
+	virtual const zchar_t* getCountryCode() = 0;
+	/// \brief Get the country name of the current information.
+	/// \return The country name.
+	virtual const zchar_t* getCountryName() = 0;
+	/// \brief Get the telephone number of the current information.
+	/// \return The telephone number.
+	virtual const zchar_t* getNumber() = 0;
+	/// \brief Get the display number of the current information. 
+	/// \return The display number.
+	virtual const zchar_t* getDisplayNumber() = 0;
+	/// \brief Get the call type of the current information.
+	/// \return Call type. For more details, see \link ZoomVideoSDKDialInNumType \endlink.
+	virtual ZoomVideoSDKDialInNumType  getType() = 0;
+};
+
+
 /*! \enum PhoneStatus
 	\brief Status of telephone.
 	Here are more detailed structural descriptions.
@@ -52,14 +89,14 @@ enum PhoneStatus
 enum PhoneFailedReason
 {
 	PhoneFailedReason_None,///<For initialization.
-	PhoneFailedReason_Busy,///<The telephone service is busy.
-	PhoneFailedReason_Not_Available,///<The telephone is out of the service.
+	PhoneFailedReason_Busy,///<The telephone number is busy.
+	PhoneFailedReason_Not_Available,///<The telephone number is out of service.
 	PhoneFailedReason_User_Hangup,///<The user hangs up.
 	PhoneFailedReason_Other_Fail,///<Other reasons.
-	PhoneFailedReason_No_Answer,///<The telephone does not reply.
-	PhoneFailedReason_Block_No_Host,///<Disable the function of international call-out before the host joins the session.
+	PhoneFailedReason_No_Answer,///<The user did not answer the call.
+	PhoneFailedReason_Block_No_Host,///<The invitation by phone is blocked by the system due to an absent host.
 	PhoneFailedReason_Block_High_Rate,///<The call-out is blocked by the system due to the high cost.
-	PhoneFailedReason_Block_Too_Frequent,///<All the invitees invited by the call should press the button one(1) to join the session. In case that many invitees do not press the button that leads to time out, the call invitation for this session shall be banned.
+	PhoneFailedReason_Block_Too_Frequent,///<To join the session, the invitee would press one on the phone. An invitee who fails to respond will encounter a timeout. If there are too many invitee timeouts, the call invitation feature for this session will be blocked.
 };
 
 
@@ -68,8 +105,8 @@ enum PhoneFailedReason
 class IZoomVideoSDKPhoneHelper
 {
 public:
-	/// \brief Determine whether the session supports to join by the phone or not.
-	/// \return TRUE indicates to support to join by phone. FALSE not.
+	/// \brief Determine if the session supports join by phone or not.
+	/// \return True indicates join by phone is supported, otherwise false.
 	virtual bool isSupportPhoneFeature() = 0;
 
 	/// \brief Get the list of the country information where the session supports to join by telephone.
@@ -89,9 +126,14 @@ public:
 	///Otherwise failed. To get extended error information, see \link SDKError \endlink enum.
 	virtual ZoomVideoSDKErrors cancelInviteByPhone() = 0;
 
-	/// \brief Get the process of the invitation by phone.
-	/// \return If the function succeeds, the return value is the current invite by phone process. To get extended error information, see \link PhoneStatus \endlink enum
+	/// \brief Get the status of the invitation by phone.
+	/// \return If the function succeeds, the method returns the PhoneStatus of the invitation by phone. To get extended error information, see \link PhoneStatus \endlink enum
 	virtual PhoneStatus getInviteByPhoneStatus() = 0;
+
+	/// \brief Get the list of dial in numbers supported by session.
+	/// \return If the function succeeds, the return value is the list of the dial-in numbers. 
+	///Otherwise failed. For more details, see \link ISessionDialInNumberInfo \endlink.
+	virtual IVideoSDKVector<IZoomVideoSDKSessionDialInNumberInfo*>* getSessionDialInNumbers() = 0;
 };
 
 END_ZOOM_VIDEO_SDK_NAMESPACE

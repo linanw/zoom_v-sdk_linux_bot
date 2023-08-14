@@ -22,6 +22,11 @@ class IZoomVideoSDKCmdChannel;
 class IZoomVideoSDKPhoneHelper;
 class IZoomVideoSDKAudioSettingHelper;
 class IZoomVideoSDKTestAudioDeviceHelper;
+class IZoomVideoSDKNetworkConnectionHelper;
+class IZoomVideoSDKCRCHelper;
+class IZoomVideoSDKVideoSettingHelper;
+class IZoomVideoSDKShareSettingHelper;
+class IZoomVideoSDKLiveTranscriptionHelper;
 /// \brief Zoom Video SDK API manager. Main singleton object that controls the video session creation, event callbacks and other main features of video SDK.
 ///
 class IZoomVideoSDK
@@ -30,7 +35,7 @@ public:
 	virtual ~IZoomVideoSDK(){}
 
 	/// \brief Initialize the Zoom Video SDK with the appropriate parameters in the \link ZoomVideoSDKInitParams \endlink structure.
-	/// \param params Parameters for init zoom video sdk. For more details, see \link ZoomVideoSDKInitParams \endlink structure.
+	/// \param [out] params Parameters for init zoom video sdk. For more details, see \link ZoomVideoSDKInitParams \endlink structure.
 	/// \return If the function succeeds, the return value is ZoomVideoSDKErrors_Success.
 	///Otherwise failed. To get extended error information, see \link ZoomVideoSDKErrors \endlink enum.
     virtual ZoomVideoSDKErrors initialize(ZoomVideoSDKInitParams& params) = 0;
@@ -50,7 +55,7 @@ public:
 	
 	/// \brief Call this method to join a session with the appropriate ZoomVideoSDKSessionContext parameters. 
 	/// When seccessful, the SDK will attempt to join a session. Use the callbacks in the listener to confirm whether the SDK actually joined.
-	/// \param params The parameter is used to join session. For more details, see \link ZoomVideoSDKSessionContext \endlink structure. 
+	/// \param [out] params The parameter is used to join session. For more details, see \link ZoomVideoSDKSessionContext \endlink structure. 
 	/// \return If the function succeeds, the return value is the pointer to IZoomVideoSDKSession object.
 	///Otherwise NULL. To get extended error information, see \link IZoomVideoSDKSession \endlink enum.
 	virtual IZoomVideoSDKSession* joinSession(ZoomVideoSDKSessionContext& params) = 0;
@@ -119,6 +124,26 @@ public:
 	/// \brief Get audio setting helper object.
 	/// \return If the function succeeds, the return value is the audio device test helper object. Otherwise returns NULL. For more details, see \link IZoomVideoSDKTestAudioDeviceHelper \endlink.
 	virtual IZoomVideoSDKTestAudioDeviceHelper* GetAudioDeviceTestHelper() = 0;
+
+	/// \brief Get network connection helper object.
+	/// \return If the function succeeds, the return value is the network connection helper object. Otherwise returns NULL. For more details, see \link IZoomVideoSDKNetworkConnectionHelper \endlink.
+	virtual IZoomVideoSDKNetworkConnectionHelper* getNetworkConnectionHelper() = 0;
+
+	/// \brief Get CRC helper object.
+	/// \return If the function succeeds, the return value is the CRC helper object. Otherwise returns NULL. For more details, see \link IZoomVideoSDKCRCHelper
+	virtual IZoomVideoSDKCRCHelper* getCRCHelper() = 0;
+
+	/// \brief Get video setting helper object.
+	/// \return If the function succeeds, the return value is the video setting helper object. Otherwise returns NULL. For more details, see \link IZoomVideoSDKVideoSettingHelper \endlink.
+	virtual IZoomVideoSDKVideoSettingHelper* getVideoSettingHelper() = 0;
+
+	/// \brief Get share setting helper object.
+	/// \return If the function succeeds, the return value is the share setting helper object. Otherwise returns NULL. For more details, see \link IZoomVideoSDKShareSettingHelper \endlink.
+	virtual IZoomVideoSDKShareSettingHelper* getShareSettingHelper() = 0;
+
+	/// \brief Get live transcription helper object.
+	/// \return If the function succeeds, the return value is the live transcription helper object. Otherwise returns NULL. For more details, see \link IZoomVideoSDKLiveTranscriptionHelper \endlink.
+	virtual IZoomVideoSDKLiveTranscriptionHelper* getLiveTranscriptionHelper() = 0;
 };
 END_ZOOM_VIDEO_SDK_NAMESPACE
 #endif

@@ -7,6 +7,7 @@
 #include <iostream>
 #include <signal.h>
 #include <stdlib.h>
+#include <string>
 #include <curl/curl.h>
 
 
@@ -208,7 +209,7 @@ public:
        else  if (s.compare("c")==0){
 
     printf("chat message received : catch\n");
-   std::string url_to_call = FINALLocalURL+"catch";
+    std::string url_to_call = FINALLocalURL+"catch";
     callNodeJSToSerialHelper(url_to_call);
 
 
@@ -366,8 +367,25 @@ public:
     virtual void onLiveTranscriptionMsgError(ILiveTranscriptionLanguage *spokenLanguage, ILiveTranscriptionLanguage *transcriptLanguage) {}
 
 
+    virtual void onUserRecordingConsent(IZoomVideoSDKUser* pUser) { };
+    virtual void onCloudRecordingStatus(RecordingStatus status, IZoomVideoSDKRecordingConsentHandler* pHandler) {};
+    virtual void onOriginalLanguageMsgReceived(ILiveTranscriptionMessageInfo* messageInfo){};
+    virtual void onChatPrivilegeChanged(IZoomVideoSDKChatHelper* pChatHelper, ZoomVideoSDKChatPrivilegeType privilege){};
+    virtual void onVideoCanvasSubscribeFail(ZoomVideoSDKSubscribeFailReason fail_reason, IZoomVideoSDKUser* pUser, void* handle){};
+    virtual void onShareCanvasSubscribeFail(ZoomVideoSDKSubscribeFailReason fail_reason, IZoomVideoSDKUser* pUser, void* handle){};
+    virtual void onAnnotationHelperCleanUp(IZoomVideoSDKAnnotationHelper* helper) {};
+    virtual void onAnnotationPrivilegeChange(IZoomVideoSDKUser* pUser, bool enable) {};
+    virtual void onLiveTranscriptionMsgInfoReceived(ILiveTranscriptionMessageInfo* messageInfo) { };
+    virtual void onChatMsgDeleteNotification(IZoomVideoSDKChatHelper* pChatHelper, const zchar_t* msgID, ZoomVideoSDKChatMessageDeleteType deleteBy){    };
+    virtual void onProxyDetectComplete() {};
+    virtual void onProxySettingNotification(IZoomVideoSDKProxySettingHandler* handler){};
+    virtual void onSSLCertVerifiedFailNotification(IZoomVideoSDKSSLCertificateInfo* info) {};	
+    virtual void onUserVideoNetworkStatusChanged(ZoomVideoSDKNetworkStatus status, IZoomVideoSDKUser* pUser){};
+    virtual void onCallCRCDeviceStatusChanged(ZoomVideoSDKCRCCallStatus status) {};
+    virtual void onSendFileStatus(IZoomVideoSDKSendFile* file, const FileTransferStatus& status){};
+	virtual void onReceiveFileStatus(IZoomVideoSDKReceiveFile* file, const FileTransferStatus& status) {};
 
-
+   
     static int callNodeJSToSerialHelper(std::string local_url)
 {
   CURL *curl;
@@ -421,8 +439,6 @@ void joinVideoSDKSession(std::string &session_name, std::string &session_psw, st
     IZoomVideoSDKSession *session = NULL;
     if (video_sdk_obj)
         session = video_sdk_obj->joinSession(session_context);
-
-       
 }
 
 void startLiveStreaming(){
@@ -456,7 +472,8 @@ void startLiveStreaming(){
 void startCommandChannel(){
 
     IZoomVideoSDKCmdChannel* commandChannel = video_sdk_obj->getCmdChannel();
-  commandChannel->sendCommand(NULL,"init");
+  //dreamtcs
+  //commandChannel->sendCommand(NULL,"init");
 
 }
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
@@ -465,8 +482,32 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
     //TODO dreamtcs improve if we have time
     ((std::string*)userp)->append((char*)contents, size * nmemb);
     std::string response=(char*)contents;
-    std::string response2= response.substr(14,response.length());
-    FINALJWTToken =response2.substr(0,response2.length()-2);
+    //std::string response2= response.substr(14,response.length());
+    //FINALJWTToken =response2.substr(0,response2.length()-50);
+
+    
+        Json responses_json;
+        try
+        {
+            responses_json = Json::parse(response);
+            printf("config all_content: %s\n", response.c_str());
+        }
+        catch (Json::parse_error &ex)
+        {
+          
+        }
+
+        Json json_signature = responses_json["signature"];
+        Json json_sdkKey = responses_json["sdkKey"];
+
+        
+          if (!json_signature.is_null())
+            {
+                FINALJWTToken = json_signature.get<std::string>();
+               
+            }
+
+  printf("Token in callback is: %s\n", FINALJWTToken.c_str());
     return size * nmemb;
 }
 
@@ -479,14 +520,17 @@ int getJWTToken(std::string remote_url, std::string session_name){
   
   char *json = NULL;
   struct curl_slist *headers = NULL;
-
+  printf("initing curl");
   curl = curl_easy_init();
   if(curl) {
-    //curl_easy_setopt(curl, CURLOPT_URL, "https://asdc.cc/video/");
+   
+    //curl_easy_setopt(curl, CURLOPT_URL, L"https://asdc.cc/video/");
+    printf("setting remote url");
     curl_easy_setopt(curl, CURLOPT_URL, remote_url.c_str());
 
     //buffer size
-      curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, 120000L);
+    printf("setting buffer");
+    curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, 120000L);
     //region for callback
     // curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
     // curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
@@ -495,18 +539,28 @@ int getJWTToken(std::string remote_url, std::string session_name){
     //std::cout << readBuffer << std::endl;
     //region for call back
 
+   //temp workaround to enable SSL / HTTPS
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
+          curl_easy_setopt(curl, CURLOPT_SSL_VERIFYSTATUS, 0);
+    curl_easy_setopt(curl, CURLOPT_CAINFO, "/root/zoom_v-sdk_linux_bot/bin/cacert.pem");
+    curl_easy_setopt(curl, CURLOPT_CAPATH, "/root/zoom_v-sdk_linux_bot/bin/cacert.pem");
    //headers
+   printf("setting headers");
    headers = curl_slist_append(headers, "Expect:");
    headers = curl_slist_append(headers, "Content-Type: application/json");
    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
   
-   //std::string json = "{\"sessionName\":\"herochun6871\",\"role\":1,\"user_identity\":\"user_identity6871\",\"session_key\":\"session_key6871\"}";
-   std::string json = "{\"sessionName\":\""+session_name+"\",\"role\":1,\"user_identity\":\"user_identity6871\",\"session_key\":\"session_key6871\"}";
+   printf("setting payload");  
+   std::string json = "{\"sessionName\":\"herochun2022\",\"role\":1,\"user_identity\":\"user_identity6871\",\"session_key\":\"session_key6871\"}";
+   //std::string json = "{\"sessionName\":\""+session_name+"\",\"role\":1,\"user_identity\":\"user_identity6871\",\"session_key\":\"session_key6871\"}";
    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json.c_str());
    //callback
+    printf("preparing callback");  
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
     //perform
+    printf("calling remote URL");  
     res = curl_easy_perform(curl);
     std::cout << readBuffer << std::endl;
     /* Check for errors */
@@ -549,8 +603,7 @@ int main(int argc, char *argv[])
     t.read(&buffer[0], size);
 
     std::string session_name, session_psw, session_token, local_url, remote_url;
-    do
-    {
+ 
         Json config_json;
         try
         {
@@ -559,12 +612,12 @@ int main(int argc, char *argv[])
         }
         catch (Json::parse_error &ex)
         {
-            break;
+          
         }
 
         if (config_json.is_null())
         {
-            break;
+          
         }
 
 
@@ -573,48 +626,60 @@ int main(int argc, char *argv[])
         Json json_token = config_json["token"];
         Json json_local_url = config_json["local_url_for_serial_control"];
         Json json_remote_url = config_json["remote_url_for_jwt_token"];
-        if (!json_name.is_null())
+
+        try
         {
-            session_name = json_name.get<std::string>();
-            printf("config session_name: %s\n", session_name.c_str());
-        }
+          if (!json_name.is_null())
+            {
+                session_name = json_name.get<std::string>();
+                printf("config session_name: %s\n", session_name.c_str());
+            }
         if (!json_psw.is_null())
-        {
-            session_psw = json_psw.get<std::string>();
-            printf("config session_psw: %s\n", session_psw.c_str());
-        }
+            {
+                session_psw = json_psw.get<std::string>();
+                printf("config session_psw: %s\n", session_psw.c_str());
+            }
         if (!json_token.is_null())
-        {
-            session_token = json_token.get<std::string>();
-            printf("config session_token: %s\n", session_token.c_str());
-        }
+            {
+                session_token = json_token.get<std::string>();
+                printf("config session_token: %s\n", session_token.c_str());
+            }
 
          if (!json_local_url.is_null())
-        {
-            local_url = json_local_url.get<std::string>();
-            FINALLocalURL=local_url;
-            printf("config local_url: %s\n", local_url.c_str());
-        }
+            {
+                local_url = json_local_url.get<std::string>();
+                FINALLocalURL=local_url;
+                printf("config local_url: %s\n", local_url.c_str());
+            }
 
          if (!json_remote_url.is_null())
-        {
-            remote_url = json_remote_url.get<std::string>();
-            printf("config remote_url: %s\n", remote_url.c_str());
+            {
+                remote_url = json_remote_url.get<std::string>();
+                printf("config remote_url: %s\n", remote_url.c_str());
+            }
+   
         }
-    } while (false);
+        catch (Json::parse_error &ex)
+        {
+          
+        }
+      
 
-    if (session_name.size() == 0 || session_token.size() == 0)
-    {
-        return 0;
-    }
+    // printf("Checking Session Name and Token");
+    // if (session_name.size() == 0 || session_token.size() == 0)
+    // {
+    //     return 0;
+    // }
+    printf("GET JWT Token");
     getJWTToken(remote_url,session_name);
     printf("begin to join: %s\n", self_dir.c_str());
     //joinVideoSDKSession(session_name, session_psw, session_token);
-    
+      printf("Token is: %s\n", FINALJWTToken.c_str());
     joinVideoSDKSession(session_name, session_psw, FINALJWTToken);
-       startCommandChannel();
+     //dreamtcs to fix this
+    //startCommandChannel();
        
-     startLiveStreaming();
+     //startLiveStreaming();
     struct sigaction sigIntHandler;
 
     sigIntHandler.sa_handler = my_handler;

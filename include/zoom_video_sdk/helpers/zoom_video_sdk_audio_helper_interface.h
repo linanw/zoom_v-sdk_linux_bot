@@ -48,14 +48,14 @@ public:
 	///Otherwise failed. To get extended error information, see \link ZoomVideoSDKErrors \endlink enum.
     virtual ZoomVideoSDKErrors stopAudio() = 0;
 	
-	/// \brief mute user's voip audio. 0 means current user (myself).
-	/// \param pUser, the user which you want to mute.
+	/// \brief Mute user's voip audio. 0 means current user (myself).
+	/// \param pUser The user which you want to mute.
 	/// \return If the function succeeds, the return value is ZoomVideoSDKErrors_Success.
 	///Otherwise failed. To get extended error information, see \link ZoomVideoSDKErrors \endlink enum.
 	virtual ZoomVideoSDKErrors muteAudio(IZoomVideoSDKUser* pUser) = 0;
 	
-	/// \brief unMute user's voip audio.
-	/// \param pUser, the user which you want to unMute.
+	/// \brief Unmute user's voip audio.
+	/// \param pUser The user which you want to unMute.
 	/// \return If the function succeeds, the return value is ZoomVideoSDKErrors_Success.
 	///Otherwise failed. To get extended error information, see \link ZoomVideoSDKErrors \endlink enum.
 	virtual ZoomVideoSDKErrors unMuteAudio(IZoomVideoSDKUser* pUser) = 0;
@@ -75,15 +75,15 @@ public:
 	virtual IVideoSDKVector<IZoomVideoSDKMicDevice*>* getMicList() = 0;
 	
 	/// \brief Select some speaker device as default device.
-	/// \param deviceId, device id.
-	/// \param deviceName, device name.
+	/// \param deviceId Device id.
+	/// \param deviceName Device name.
 	/// \return If the function succeeds, the return value is ZoomVideoSDKErrors_Success.
 	///Otherwise failed. To get extended error information, see \link ZoomVideoSDKErrors \endlink enum.
 	virtual ZoomVideoSDKErrors selectSpeaker(const zchar_t* deviceId, const zchar_t* deviceName) = 0;
 	
 	/// \brief Select some mic device as default device.
-	/// \param deviceId, device id.
-	/// \param deviceName, device name.
+	/// \param deviceId Device id.
+	/// \param deviceName Device name.
 	/// \return If the function succeeds, the return value is ZoomVideoSDKErrors_Success.
 	///Otherwise failed. To get extended error information, see \link ZoomVideoSDKErrors \endlink enum.
 	virtual ZoomVideoSDKErrors selectMic(const zchar_t* deviceId, const zchar_t* deviceName) = 0;

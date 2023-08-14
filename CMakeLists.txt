@@ -18,6 +18,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/include/zoom_video_sdk)
 include_directories(${CMAKE_SOURCE_DIR}/include/ffmpeg)
 
+
 link_directories(${CMAKE_SOURCE_DIR}/lib/zoom_video_sdk)
 link_directories(${CMAKE_SOURCE_DIR}/lib/ffmpeg)
 
@@ -29,6 +30,10 @@ target_link_libraries(video_sdk_session_recorder z pthread avformat)
 target_link_libraries(video_sdk_session_recorder z lzma swresample avcodec)
 target_link_libraries(video_sdk_session_recorder avutil)
 target_link_libraries(video_sdk_session_recorder swscale avfilter)
+target_link_libraries(video_sdk_session_recorder curl)
+
+
+
 
 configure_file(${CMAKE_SOURCE_DIR}/config.json ${CMAKE_SOURCE_DIR}/bin/config.json COPYONLY)
 file(COPY ${CMAKE_SOURCE_DIR}/lib/zoom_video_sdk/ DESTINATION ${CMAKE_SOURCE_DIR}/bin)

@@ -11,7 +11,7 @@ make
 
 ####
 there is additional libraries needed for http post request
-curl.h 
+`curl.h` 
 
 references
 https://stackoverflow.com/questions/51317221/how-to-use-libcurl-in-c-to-send-a-post-request-and-receive-it
@@ -20,7 +20,7 @@ https://stackoverflow.com/questions/69861500/making-a-post-request-in-c-with-cur
 To run this example, you need to have the curl headers installed
 
 #Install header files and library for cURL
-sudo aptitude install libcurl4-openssl-dev
+`sudo apt install libcurl4-openssl-dev`
 #Download sample cpp file
 curl -sLO https://gist.github.com/alghanmi/c5d7b761b2c9ab199157/raw/curl_example.cpp
 #Compile and run the code
