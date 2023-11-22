@@ -5,3 +5,5 @@ build/
 *.mkv
 lib/ffmpeg
 lib/zoom_video_sdk/qt_libs
+/.vs
+/CMakeSettings.json
