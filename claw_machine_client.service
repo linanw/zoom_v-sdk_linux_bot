@@ -8,9 +8,9 @@ After=dev-video0.device
 [Service]
 Environment=
 Type=simple
-User=zoomda
+User=dreamtcs
 ExecStartPre=/bin/sleep 15
-ExecStart=/home/zoomda/GitHub/zoom_v-sdk_linux_bot/bin/video_sdk_session_recorder
+ExecStart=/home/dreamtcs/zoom_v-sdk_linux_bot/bin/video_sdk_session_recorder
 Restart=on-failure
 
 [Install]

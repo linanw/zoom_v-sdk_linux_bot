@@ -533,8 +533,7 @@ int getJWTToken(std::string remote_url, std::string session_name){
    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
   
    printf("setting payload");  
-   std::string json = "{\"sessionName\":\"herochun2022\",\"role\":1,\"user_identity\":\"user_identity6871\",\"session_key\":\"session_key6871\"}";
-   //std::string json = "{\"sessionName\":\""+session_name+"\",\"role\":1,\"user_identity\":\"user_identity6871\",\"session_key\":\"session_key6871\"}";
+   std::string json = "{\"sessionName\":\"herochun2022\",\"role\":1,\"user_identity\":\"user_identity6871\",\"session_key\":\"session_key6871\"}";;
    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json.c_str());
    //callback
     printf("preparing callback");  
